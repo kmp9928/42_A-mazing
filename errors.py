@@ -52,3 +52,7 @@ class EntryExitError(ConfigFileError):
 class MandatoryKeyError(ConfigFileError):
     def __init__(self, key: str):
         super().__init__(f"Missing mandatory key {key} in configuration file.")
+
+
+class DirectionError (Exception):
+    pass
