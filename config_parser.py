@@ -1,7 +1,7 @@
 from typing import Optional
 from dataclasses import dataclass
 from pathlib import Path
-from class_errors import (
+from errors import (
     ConfigFileNotFoundError,
     WrongValueError,
     KeyValueError,
