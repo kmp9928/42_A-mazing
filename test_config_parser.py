@@ -2,7 +2,7 @@ import os
 import pytest
 from typing import Union, Optional
 from config_parser import ConfigParser, Config
-from class_errors import ConfigFileError
+from errors import ConfigFileError
 
 
 def prepare_test_file(override: Optional[Union[dict[str, str], str]]):
