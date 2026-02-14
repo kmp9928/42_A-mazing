@@ -54,5 +54,5 @@ class MandatoryKeyError(ConfigFileError):
         super().__init__(f"Missing mandatory key {key} in configuration file.")
 
 
-class DirectionError(Exception):
+class EntryExitInFTError(Exception):
     pass
