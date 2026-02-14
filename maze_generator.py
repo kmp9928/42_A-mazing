@@ -26,7 +26,10 @@ class MazeGenerator:
         self.maze = Maze(config.width, config.height)
         self.draw_42()
         self.visited = self.maze.get_blocked_cells()
-        if self.config.entry in self.visited:
+        if (
+            self.config.entry in self.visited or
+            self.config.exit in self.visited
+        ):
             raise EntryExitInFTError(
                 "Entry/exit points in '42' pattern. For this maze, points "
                 f"can't be any of these coordinates: {self.visited}"
