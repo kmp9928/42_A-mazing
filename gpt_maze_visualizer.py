@@ -8,7 +8,7 @@ def print_maze(maze: Maze, height: int, width: int):
         top_line = ""
         for x in range(width):
             top_line += "+"
-            if maze.at(x, y).north == 1:
+            if maze.get_cell(x, y).north == 1:
                 top_line += "---"
             else:
                 top_line += "   "
@@ -18,15 +18,15 @@ def print_maze(maze: Maze, height: int, width: int):
         # --- Draw west/east walls ---
         middle_line = ""
         for x in range(width):
-            if maze.at(x, y).west == 1:
+            if maze.get_cell(x, y).west == 1:
                 middle_line += "|"
             else:
                 middle_line += " "
 
-            middle_line += "   "
+            middle_line += f" {'x' if maze.get_cell(x, y).blocked else ' '} "
 
         # right border (east wall of last cell)
-        if maze.at(width - 1, y).east == 1:
+        if maze.get_cell(width - 1, y).east == 1:
             middle_line += "|"
         else:
             middle_line += " "
@@ -37,7 +37,7 @@ def print_maze(maze: Maze, height: int, width: int):
     bottom_line = ""
     for x in range(width):
         bottom_line += "+"
-        if maze.at(x, height - 1).south == 1:
+        if maze.get_cell(x, height - 1).south == 1:
             bottom_line += "---"
         else:
             bottom_line += "   "
