@@ -1,6 +1,8 @@
 from typing import List
 import random
+from sys import stderr
 from config_parser import Config
+from errors import EntryExitInFTError
 from maze import Maze
 from maze_42 import maze_42
 from gpt_maze_visualizer import print_maze
@@ -22,21 +24,29 @@ class MazeGenerator:
         cells from the pattern in "visited" cells. Finally, call dfs method to
         carve out maze."""
         self.maze = Maze(config.width, config.height)
-        # Check min size to add 42 and add error message +++
-        if self.maze.width > 10 and self.maze.height > 10:
-            self.draw_42()
+        self.draw_42()
         self.visited = self.maze.get_blocked_cells()
-        self.dfs(0, 0)
+        if self.config.entry in self.visited:
+            raise EntryExitInFTError(
+                "Entry/exit points in '42' pattern. For this maze, points "
+                f"can't be any of these coordinates: {self.visited}"
+            )
+        self.dfs(*self.config.entry)
         return self.maze
 
     def draw_42(self) -> None:
         """Draw in the initial grid the "42" pattern. The "drawing" of the 
         pattern is done by a "maze" copy, from a mini "maze" (maze_42) to the
         middle part of the initial grid."""
-        # Check min size to add 42 and add error message +++
+        if (
+            self.maze.width < maze_42.width + 2 or
+            self.maze.height < maze_42.height + 2
+        ):
+            print("Maze size doesn't allow drawing '42' pattern.", file=stderr)
+            return
         x = int((self.maze.width - maze_42.width) / 2)
         y = int((self.maze.height - maze_42.height) / 2)
-        self.maze.paste(maze_42, x, y)
+        self.maze.copy_from(maze_42, x, y)
 
     def dfs(self, x: int, y: int):
         """"Depth first search. Carves out the maze by opening a wall of the
@@ -55,7 +65,7 @@ class MazeGenerator:
             self.dfs(next_x, next_y)
 
     def get_unvisited_neighbors(self, x: int, y: int) -> List[str]:
-        """Check for a cell which of the neighbourhoring cells haven't been 
+        """Check for a cell which of the neighborhoring cells haven't been
         visited in the dfs method."""
         result = []
 
@@ -77,15 +87,17 @@ class MazeGenerator:
 if __name__ == "__main__":
     print("=== Generate maze ===")
     config = Config(
-        width=15,
-        height=20,
-        entry=(1, 1),
-        exit=(14, 19),
+        width=20,
+        height=15,
+        entry=(0, 0),
+        exit=(19, 14),
         output_file="example.txt",
         perfect=True
     )
     seed = 1
     maze_genertor = MazeGenerator(config, seed)
     maze = maze_genertor.create()
+    for row in maze.grid:
+        print(row)
     print("FINAL")
     print_maze(maze, config.height, config.width)
