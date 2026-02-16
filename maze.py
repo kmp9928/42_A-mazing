@@ -1,51 +1,72 @@
-from typing import List, Optional
+from typing import List
+from enum import Enum
 from dataclasses import dataclass
-from errors import DirectionError
+
+
+class CellType(Enum):
+    OPEN = 0
+    BLOCKED = 1
+    PATH = 2
 
 
 @dataclass
 class Cell:
-    west: int = 1
-    south: int = 1
-    east: int = 1
-    north: int = 1
-    blocked: bool = False
+    """Cell properties describe walls (or lack of) for a cell in a maze.
+    Cell can be of one type:
+    - Open
+    - Blocked (filled cell)
+    - Path (solution for the maze)
+
+    Example usage:
+    ```
+    cell = Cell(type=CellType.BLOCKED)
+    cell.blocked == True
+    cell.open == False
+    cell.path == False
+    cell.north == True
+    cell.south == True
+    ```
+    """
+    west: bool = True
+    south: bool = True
+    east: bool = True
+    north: bool = True
+    type: CellType = CellType.OPEN
+
+    @property
+    def open(self) -> bool:
+        return self.type == CellType.OPEN
+
+    @property
+    def blocked(self) -> bool:
+        return self.type == CellType.BLOCKED
+
+    @property
+    def path(self) -> bool:
+        return self.type == CellType.PATH
 
     def __repr__(self):
-        # For printing maze. !!!! Remove before submission !!!!
-        b = " "
+        # !!!! For printing maze. Remove before submission !!!!
+        t = "O"
         if self.blocked:
-            b = "X"
-        return f"{b}w{self.west}s{self.south}e{self.east}n{self.north}{b}"
+            t = "B"
+        elif self.path:
+            t = "P"
+        w = 1 if self.west else 0
+        s = 1 if self.south else 0
+        e = 1 if self.east else 0
+        n = 1 if self.north else 0
+        return f"{t}w{w}s{s}e{e}n{n}{t}"
 
-    def set(
-        self,
-        west: Optional[bool] = None,
-        south: Optional[bool] = None,
-        east: Optional[bool] = None,
-        north: Optional[bool] = None,
-        blocked: Optional[bool] = None
-    ) -> "Cell":
-        if west is not None:
-            self.west = 1 if west else 0
-        if south is not None:
-            self.south = 1 if south else 0
-        if east is not None:
-            self.east = 1 if east else 0
-        if north is not None:
-            self.north = 1 if north else 0
-        if blocked is not None:
-            self.blocked = blocked
+    def set(self, **kwargs) -> "Cell":
+        """ Sets the cell properties.
+        For example:
+        - cell.set(north=True)
+        - cell.set(type=CellType.BLOCKED)
+        """
+        for key, value in kwargs.items():
+            self.__setattr__(key, value)
         return self
-
-    def copy_from(self, cell: "Cell") -> None:
-        self.set(
-            north=cell.north,
-            south=cell.south,
-            east=cell.east,
-            west=cell.west,
-            blocked=cell.blocked
-        )
 
 
 class Maze:
@@ -64,35 +85,35 @@ class Maze:
                 row.append(Cell())
             self.grid.append(row)
 
-    def at(self, x: int, y: int) -> Cell:
+    def get_cell(self, x: int, y: int) -> Cell:
         return self.grid[y][x]
 
     def carve_at(self, x: int, y: int, direction: str) -> tuple[int, int]:
-        """Depending on the direction chosen in the dfs method in the 
+        """Depending on the direction chosen in the dfs method in the
         MazeGenerator class, remove the wall between current cell and next
         cell. """
         if direction == "north":
             next_x = x
             next_y = y - 1
-            self.at(next_x, next_y).set(south=False)
-            self.at(x, y).set(north=False)
+            self.get_cell(next_x, next_y).set(south=False)
+            self.get_cell(x, y).set(north=False)
         elif direction == "south":
             next_x = x
             next_y = y + 1
-            self.at(next_x, next_y).set(north=False)
-            self.at(x, y).set(south=False)
+            self.get_cell(next_x, next_y).set(north=False)
+            self.get_cell(x, y).set(south=False)
         elif direction == "east":
             next_x = x + 1
             next_y = y
-            self.at(next_x, next_y).set(west=False)
-            self.at(x, y).set(east=False)
+            self.get_cell(next_x, next_y).set(west=False)
+            self.get_cell(x, y).set(east=False)
         elif direction == "west":
             next_x = x - 1
             next_y = y
-            self.at(next_x, next_y).set(east=False)
-            self.at(x, y).set(west=False)
+            self.get_cell(next_x, next_y).set(east=False)
+            self.get_cell(x, y).set(west=False)
         else:
-            raise DirectionError(f"Invalid direction {direction} for carving.")
+            assert False, "Unreachable state, this should not happen."
 
         return (next_x, next_y)
 
@@ -101,12 +122,15 @@ class Maze:
             (x, y)
             for y in range(self.height)
             for x in range(self.width)
-            if self.at(x, y).blocked
+            if self.get_cell(x, y).blocked
         ]
 
-    def paste(self, maze: "Maze", offset_x: int, offset_y: int) -> None:
-        for x in range(maze.width):
-            for y in range(maze.height):
+    def copy_from(self, source: "Maze", offset_x: int, offset_y: int) -> None:
+        for x in range(source.width):
+            for y in range(source.height):
                 paste_x = offset_x + x
                 paste_y = offset_y + y
-                self.at(paste_x, paste_y).copy_from(maze.at(x, y))
+                # Copy cell values from source maze to current maze
+                self.get_cell(paste_x, paste_y).set(
+                    **source.get_cell(x, y).__dict__
+                )
