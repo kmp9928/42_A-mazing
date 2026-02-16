@@ -1,0 +1,33 @@
+# This file builds a configuration for the mazegen package
+# You need either this file or a setup.py file
+# The different sections are read by diff setup tools..
+
+[build-system]
+# Tools needed to build the package
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"     # This tells Python to use setuptools to build this package
+
+[project]
+# Package metadata displayed on PyPI
+name = "mazegen"
+version = "1.0.0"
+description = "Maze generator library"
+authors = [
+    { name = "kimendon, sukerl" }
+]
+requires-python = ">=3.10"
+
+#   [tool.setuptools]
+#   # This sets package directory
+#   # Good practice to use src to avoid imports from project root
+#   package-dir = { "" = "src" }
+
+#   # replacement for packages=find_packages() in setup.py:
+#   # This is how packages are discovered:
+#   [tool.setuptools.packages.find]
+#   where = ["src"]
+
+[tool.setuptools.package-data]
+# This tells type checkers like mypy that this package contains inline type hints
+# That allows users to trust the annotations
+mazegen = ["py.typed"]
