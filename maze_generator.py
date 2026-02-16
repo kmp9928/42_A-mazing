@@ -3,7 +3,7 @@ import random
 from sys import stderr
 from config_parser import Config
 from errors import EntryExitInFTError
-from maze import Maze
+from maze import Maze, Coordinate
 from maze_42 import maze_42
 from gpt_maze_visualizer import print_maze
 
@@ -34,7 +34,7 @@ class MazeGenerator:
                 "Entry/exit points in '42' pattern. For this maze, points "
                 f"can't be any of these coordinates: {self.visited}"
             )
-        self.dfs(*self.config.entry)
+        self.dfs(self.config.entry)
         return self.maze
 
     def draw_42(self) -> None:
@@ -51,39 +51,41 @@ class MazeGenerator:
         y = int((self.maze.height - maze_42.height) / 2)
         self.maze.copy_from(maze_42, x, y)
 
-    def dfs(self, x: int, y: int):
+    def dfs(self, coordinate: Coordinate):
         """"Depth first search. Carves out the maze by opening a wall of the
         cells in the maze by recursively moving to neighboring unvisited cells.
         Once a dead end is reached, the function backtracks."""
-        self.visited.append((x, y))
-        while True:
-            unvisited_neighbors = self.get_unvisited_neighbors(x, y)
+        stack = [(coordinate, coordinate)]
+        while stack:
+            previous_coordinate, current_coordinate = stack[0]
+            del stack[0]
+            if current_coordinate in self.visited:
+                continue
+            self.visited.append(current_coordinate)
+            self.maze.carve_at(previous_coordinate, current_coordinate)
+            stack = self.get_unvisited_neighbors(current_coordinate) + stack
 
-            if len(unvisited_neighbors) == 0:
-                return
-            else:
-                next_cell = random.choice(unvisited_neighbors)
-
-            next_x, next_y = self.maze.carve_at(x, y, next_cell)
-            self.dfs(next_x, next_y)
-
-    def get_unvisited_neighbors(self, x: int, y: int) -> List[str]:
-        """Check for a cell which of the neighborhoring cells haven't been
+    def get_unvisited_neighbors(
+            self, coordinate: Coordinate
+    ) -> List[tuple[Coordinate, Coordinate]]:
+        """Check for a cell which of the cells around it haven't been
         visited in the dfs method."""
-        result = []
+        x, y = coordinate
+        result: List[tuple[Coordinate, Coordinate]] = []
 
         if y > 0 and (x, y - 1) not in self.visited:
-            result.append("north")
+            result.append(((x, y), (x, y - 1)))
 
         if y < config.height - 1 and (x, y + 1) not in self.visited:
-            result.append("south")
+            result.append(((x, y), (x, y + 1)))
 
         if x < config.width - 1 and (x + 1, y) not in self.visited:
-            result.append("east")
+            result.append(((x, y), (x + 1, y)))
 
         if x > 0 and (x - 1, y) not in self.visited:
-            result.append("west")
+            result.append(((x, y), (x - 1, y)))
 
+        random.shuffle(result)
         return result
 
 
@@ -91,9 +93,9 @@ if __name__ == "__main__":
     print("=== Generate maze ===")
     config = Config(
         width=20,
-        height=15,
-        entry=(0, 0),
-        exit=(19, 14),
+        height=20,
+        entry=(1, 1),
+        exit=(1, 2),
         output_file="example.txt",
         perfect=True
     )
