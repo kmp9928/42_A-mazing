@@ -4,10 +4,13 @@ from dataclasses import dataclass
 
 type Coordinate = tuple[int, int]
 
+
 class CellType(Enum):
     OPEN = 0
     BLOCKED = 1
     PATH = 2
+    ENTRY = 3
+    EXIT = 4
 
 
 @dataclass
@@ -46,6 +49,14 @@ class Cell:
     def path(self) -> bool:
         return self.type == CellType.PATH
 
+    @property
+    def entry(self) -> bool:
+        return self.type == CellType.ENTRY
+
+    @property
+    def exit(self) -> bool:
+        return self.type == CellType.EXIT
+
     def __repr__(self):
         # !!!! For printing maze. Remove before submission !!!!
         t = "O"
@@ -53,6 +64,10 @@ class Cell:
             t = "B"
         elif self.path:
             t = "P"
+        elif self.entry:
+            t = "e"
+        elif self.exit:
+            t = "E"
         w = 1 if self.west else 0
         s = 1 if self.south else 0
         e = 1 if self.east else 0
@@ -86,17 +101,23 @@ class Maze:
                 row.append(Cell())
             self.grid.append(row)
 
+    def get_all_coordinates(self) -> List[Coordinate]:
+        return [
+            (x, y) for x in range(self.height)
+            for y in range(self.width)
+        ]
+
     def get_cell(self, x: int, y: int) -> Cell:
         return self.grid[y][x]
 
     def carve_at(
         self, previous_coordinate: Coordinate, current_coordinate: Coordinate
-    ) -> None:
+    ) -> bool:
         """Depending on the direction chosen in the dfs method in the
         MazeGenerator class, remove the wall between current cell and next
         cell. """
         if previous_coordinate == current_coordinate:
-            return
+            return False
 
         previous_x, previous_y = previous_coordinate
         x, y = current_coordinate
@@ -114,6 +135,8 @@ class Maze:
             self.get_cell(previous_x, previous_y).set(west=False)
         else:
             assert False, "Unreachable state, this should not happen."
+
+        return True
 
     def get_blocked_cells(self) -> List[tuple[int, int]]:
         return [
