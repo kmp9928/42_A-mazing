@@ -1,4 +1,4 @@
-from maze import Maze
+from mazegen import Maze
 
 
 def print_maze(maze: Maze, height: int, width: int):
@@ -22,8 +22,18 @@ def print_maze(maze: Maze, height: int, width: int):
                 middle_line += "|"
             else:
                 middle_line += " "
-
-            middle_line += f" {'x' if maze.get_cell(x, y).blocked else ' '} "
+            
+            symbol = '   '
+            if maze.get_cell(x, y).blocked:
+                symbol = 'XXX'
+            elif maze.get_cell(x, y).path:
+                symbol = ' P '
+            elif maze.get_cell(x, y).entry:
+                symbol = '<e>'
+            elif maze.get_cell(x, y).exit:
+                symbol = '[E]'
+            
+            middle_line += symbol
 
         # right border (east wall of last cell)
         if maze.get_cell(width - 1, y).east == 1:

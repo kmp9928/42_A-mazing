@@ -3,6 +3,7 @@
 from mazegen import MazeGenerator, Config
 from sukerl_print_ascii import AsciiPrinter
 from sukerl_create_output_txt import OutputGenerator
+from gpt_maze_visualizer import print_maze
 
 if __name__ == "__main__":
     print("=== Generate maze ===")
@@ -14,8 +15,7 @@ if __name__ == "__main__":
         output_file="example.txt",
         perfect=True
     )
-    seed = 1
-    maze_genertor = MazeGenerator(config, seed)
+    maze_genertor = MazeGenerator(config)
     maze = maze_genertor.create()
     printer = AsciiPrinter()
     printer.toggle_path()
