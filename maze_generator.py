@@ -6,6 +6,7 @@ from errors import EntryExitInFTError
 from maze import CellType, Maze, Coordinate
 from maze_42 import maze_42
 from gpt_maze_visualizer import print_maze
+import datetime
 
 
 class MazeGenerator:
@@ -23,7 +24,7 @@ class MazeGenerator:
         Maze with all the cells closed). Then, add the "42" pattern and the 
         cells from the pattern in "visited" cells. Finally, call dfs method to
         carve out maze."""
-        self.maze = Maze(config.width, config.height)
+        self.maze = Maze(self.config.width, self.config.height)
         self.draw_42()
         self.visited = self.maze.get_blocked_cells()
         if (
@@ -34,10 +35,13 @@ class MazeGenerator:
                 "Entry/exit points in '42' pattern. For this maze, points "
                 f"can't be any of these coordinates: {self.visited}"
             )
+        print(datetime.datetime.now())
         self.dfs()
         if not self.config.perfect:
             self.make_imperfect()
+        print(datetime.datetime.now())
         self.bfs()
+        print(datetime.datetime.now())
         return self.maze
 
     def draw_42(self) -> None:
@@ -65,7 +69,7 @@ class MazeGenerator:
             if current_coordinate in self.visited:
                 continue
             self.visited.append(current_coordinate)
-            self.maze.carve_at(previous_coordinate, current_coordinate)
+            self.maze.set_wall_at(previous_coordinate, current_coordinate, False)
             stack = self.get_unvisited_neighbors(current_coordinate) + stack
 
     def get_unvisited_neighbors(
@@ -86,11 +90,11 @@ class MazeGenerator:
                 result.append(((x, y), (x - 1, y)))
 
         # south
-        if y < config.height - 1 and (x, y + 1) not in self.visited:
+        if y < self.config.height - 1 and (x, y + 1) not in self.visited:
             result.append(((x, y), (x, y + 1)))
 
         # east
-        if x < config.width - 1 and (x + 1, y) not in self.visited:
+        if x < self.config.width - 1 and (x + 1, y) not in self.visited:
             result.append(((x, y), (x + 1, y)))
 
         random.shuffle(result)
@@ -103,14 +107,13 @@ class MazeGenerator:
                 continue
             for coordinate in self.get_unvisited_neighbors((x, y), True):
                 # get_unvisited_neighbors gets right & bottom neighbors only
-                previous_coordinate, current_coordinate = coordinate
+                prev_coordinate, curr_coordinate = coordinate
                 if (
-                    self.check_wall(previous_coordinate, current_coordinate)
+                    self.check_wall(prev_coordinate, curr_coordinate)
                     and random.random() < 0.1
                 ):
-                    self.maze.carve_at(previous_coordinate, current_coordinate)
+                    self.remove_wall_if_valid(prev_coordinate, curr_coordinate)
                     # only one wall broken == less chances of more than 2x3/3x2
-                    break
 
     def check_wall(
             self,
@@ -157,6 +160,62 @@ class MazeGenerator:
         self.maze.get_cell(*self.config.entry).set(type=CellType.ENTRY)
         self.maze.get_cell(*self.config.exit).set(type=CellType.EXIT)
 
+    def remove_wall_if_valid(
+            self,
+            previous_coordinate: Coordinate,
+            current_coordinate: Coordinate
+    ) -> None:
+        x, y = previous_coordinate
+
+        self.maze.set_wall_at(previous_coordinate, current_coordinate, False)
+
+        row = 0
+        rectangle = []
+        horizontal_size = self.get_horizontal_size(x, y)
+        if horizontal_size > 2:
+            rectangle.append(horizontal_size)
+            top, bottom = self.get_vertical_size(x, y)
+            for i in range(1, top + 1):
+                row += 1
+                size = self.get_horizontal_size(x, y - i)
+                rectangle = [size] + rectangle
+
+            for i in range(1, bottom + 1):
+                row += 1
+                size = self.get_horizontal_size(x, y + i)
+                rectangle.append(size)
+
+            if (
+                len([val for val in rectangle[:3] if val > 2]) < 3 or
+                len([val for val in rectangle[:-3] if val > 2]) < 3 or
+                len([val for val in rectangle[1:4] if val > 2]) < 3
+            ):
+                return
+
+            self.maze.set_wall_at(previous_coordinate, current_coordinate, True)
+
+    def get_horizontal_size(self, x: int, y: int) -> int:
+        right = 0
+        while x + right < self.config.width - 1 and not self.check_wall((x + right, y), (x + right + 1, y)):
+            right += 1
+
+        left = 0
+        while x - left > 0 and not self.check_wall((x - left, y), (x - left - 1, y)):
+            left += 1
+
+        return right + left + 1
+
+    def get_vertical_size(self, x: int, y: int) -> tuple[int, int]:
+        top = 0
+        while y - top > 0 and not self.check_wall((x, y - top), (x, y - top - 1)):
+            top += 1
+
+        bottom = 0
+        while y + bottom < self.config.height - 1 and not self.check_wall((x, y + bottom), (x, y + bottom + 1)):
+            bottom += 1
+
+        return (2 if top > 2 else top, 2 if bottom > 2 else bottom)
+
 
 if __name__ == "__main__":
     print("=== Generate maze ===")
@@ -164,14 +223,14 @@ if __name__ == "__main__":
         width=100,
         height=100,
         entry=(1, 1),
-        exit=(88, 88),
+        exit=(79, 49),
         output_file="example.txt",
         perfect=False,
         seed=1
     )
     maze_genertor = MazeGenerator(config)
     maze = maze_genertor.create()
-    for row in maze.grid:
-        print(row)
+    # for row in maze.grid:
+    #     print(row)
     print("FINAL")
     print_maze(maze, config.height, config.width)

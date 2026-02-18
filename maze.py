@@ -103,15 +103,18 @@ class Maze:
 
     def get_all_coordinates(self) -> List[Coordinate]:
         return [
-            (x, y) for x in range(self.height)
-            for y in range(self.width)
+            (x, y) for y in range(self.height)
+            for x in range(self.width)
         ]
 
     def get_cell(self, x: int, y: int) -> Cell:
         return self.grid[y][x]
 
-    def carve_at(
-        self, previous_coordinate: Coordinate, current_coordinate: Coordinate
+    def set_wall_at(
+        self,
+        previous_coordinate: Coordinate,
+        current_coordinate: Coordinate,
+        set_wall: bool
     ) -> bool:
         """Depending on the direction chosen in the dfs method in the
         MazeGenerator class, remove the wall between current cell and next
@@ -122,19 +125,17 @@ class Maze:
         previous_x, previous_y = previous_coordinate
         x, y = current_coordinate
         if y < previous_y:
-            self.get_cell(x, y).set(south=False)
-            self.get_cell(previous_x, previous_y).set(north=False)
+            self.get_cell(x, y).set(south=set_wall)
+            self.get_cell(previous_x, previous_y).set(north=set_wall)
         elif y > previous_y:
-            self.get_cell(x, y).set(north=False)
-            self.get_cell(previous_x, previous_y).set(south=False)
+            self.get_cell(x, y).set(north=set_wall)
+            self.get_cell(previous_x, previous_y).set(south=set_wall)
         elif x > previous_x:
-            self.get_cell(x, y).set(west=False)
-            self.get_cell(previous_x, previous_y).set(east=False)
+            self.get_cell(x, y).set(west=set_wall)
+            self.get_cell(previous_x, previous_y).set(east=set_wall)
         elif x < previous_x:
-            self.get_cell(x, y).set(east=False)
-            self.get_cell(previous_x, previous_y).set(west=False)
-        else:
-            assert False, "Unreachable state, this should not happen."
+            self.get_cell(x, y).set(east=set_wall)
+            self.get_cell(previous_x, previous_y).set(west=set_wall)
 
         return True
 
