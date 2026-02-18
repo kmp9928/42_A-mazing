@@ -89,11 +89,13 @@ class Maze:
     grid: List[List[Cell]]
     width: int
     height: int
+    path: List[Coordinate]
 
     def __init__(self, width: int, height: int) -> None:
         self.width = width
         self.height = height
         self.grid = []
+        self.path = []
 
         for _ in range(height):
             row = []
@@ -103,7 +105,8 @@ class Maze:
 
     def get_all_coordinates(self) -> List[Coordinate]:
         return [
-            (x, y) for y in range(self.height)
+            (x, y)
+            for y in range(self.height)
             for x in range(self.width)
         ]
 
@@ -156,3 +159,9 @@ class Maze:
                 self.get_cell(paste_x, paste_y).set(
                     **source.get_cell(x, y).__dict__
                 )
+
+    def set_path(self, path: List[Coordinate]) -> None:
+        self.path = path
+
+    def get_path(self) -> List[Coordinate]:
+        return self.path

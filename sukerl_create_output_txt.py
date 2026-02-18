@@ -62,7 +62,25 @@ class OutputGenerator:
                 file.write("\n")
                 file.write(f"{config_obj.entry[0]},{config_obj.entry[1]}\n")
                 file.write(f"{config_obj.exit[0]},{config_obj.exit[1]}\n")
-                file.write("here goes fastest path")
+                file.write(f"{self.format_path(maze)}")
 
         except OSError as err:
             raise OSError(f"ERROR while opening {file_name}: {err}")
+
+    def format_path(self, maze: Maze) -> str:
+        solution = ""
+        previous_x, previous_y = (0, 0)
+
+        for coordinate in maze.get_path():
+            x, y = coordinate
+            if maze.get_cell(x, y).path:
+                if x > previous_x:
+                    solution += "E"
+                elif x < previous_x:
+                    solution += "W"
+                elif y > previous_y:
+                    solution += "S"
+                elif y < previous_y:
+                    solution += "N"
+            previous_x, previous_y = x, y
+        return solution
