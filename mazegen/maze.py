@@ -2,11 +2,15 @@ from typing import List
 from enum import Enum
 from dataclasses import dataclass
 
+type Coordinate = tuple[int, int]
+
 
 class CellType(Enum):
     OPEN = 0
     BLOCKED = 1
     PATH = 2
+    ENTRY = 3
+    EXIT = 4
 
 
 @dataclass
@@ -45,6 +49,14 @@ class Cell:
     def path(self) -> bool:
         return self.type == CellType.PATH
 
+    @property
+    def entry(self) -> bool:
+        return self.type == CellType.ENTRY
+
+    @property
+    def exit(self) -> bool:
+        return self.type == CellType.EXIT
+
     def __repr__(self):
         # !!!! For printing maze. Remove before submission !!!!
         t = "O"
@@ -52,6 +64,10 @@ class Cell:
             t = "B"
         elif self.path:
             t = "P"
+        elif self.entry:
+            t = "e"
+        elif self.exit:
+            t = "E"
         w = 1 if self.west else 0
         s = 1 if self.south else 0
         e = 1 if self.east else 0
@@ -85,37 +101,43 @@ class Maze:
                 row.append(Cell())
             self.grid.append(row)
 
+    def get_all_coordinates(self) -> List[Coordinate]:
+        return [
+            (x, y) for y in range(self.height)
+            for x in range(self.width)
+        ]
+
     def get_cell(self, x: int, y: int) -> Cell:
         return self.grid[y][x]
 
-    def carve_at(self, x: int, y: int, direction: str) -> tuple[int, int]:
+    def set_wall_at(
+        self,
+        previous_coordinate: Coordinate,
+        current_coordinate: Coordinate,
+        set_wall: bool
+    ) -> bool:
         """Depending on the direction chosen in the dfs method in the
         MazeGenerator class, remove the wall between current cell and next
         cell. """
-        if direction == "north":
-            next_x = x
-            next_y = y - 1
-            self.get_cell(next_x, next_y).set(south=False)
-            self.get_cell(x, y).set(north=False)
-        elif direction == "south":
-            next_x = x
-            next_y = y + 1
-            self.get_cell(next_x, next_y).set(north=False)
-            self.get_cell(x, y).set(south=False)
-        elif direction == "east":
-            next_x = x + 1
-            next_y = y
-            self.get_cell(next_x, next_y).set(west=False)
-            self.get_cell(x, y).set(east=False)
-        elif direction == "west":
-            next_x = x - 1
-            next_y = y
-            self.get_cell(next_x, next_y).set(east=False)
-            self.get_cell(x, y).set(west=False)
-        else:
-            assert False, "Unreachable state, this should not happen."
+        if previous_coordinate == current_coordinate:
+            return False
 
-        return (next_x, next_y)
+        previous_x, previous_y = previous_coordinate
+        x, y = current_coordinate
+        if y < previous_y:
+            self.get_cell(x, y).set(south=set_wall)
+            self.get_cell(previous_x, previous_y).set(north=set_wall)
+        elif y > previous_y:
+            self.get_cell(x, y).set(north=set_wall)
+            self.get_cell(previous_x, previous_y).set(south=set_wall)
+        elif x > previous_x:
+            self.get_cell(x, y).set(west=set_wall)
+            self.get_cell(previous_x, previous_y).set(east=set_wall)
+        elif x < previous_x:
+            self.get_cell(x, y).set(east=set_wall)
+            self.get_cell(previous_x, previous_y).set(west=set_wall)
+
+        return True
 
     def get_blocked_cells(self) -> List[tuple[int, int]]:
         return [

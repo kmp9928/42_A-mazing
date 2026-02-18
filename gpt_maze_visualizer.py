@@ -1,4 +1,4 @@
-from maze import Maze
+from mazegen import Maze
 
 
 def print_maze(maze: Maze, height: int, width: int):

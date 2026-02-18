@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-from typing import TYPE_CHECKING
+# from typing import TYPE_CHECKING
 from pathlib import Path
-
-if TYPE_CHECKING:
-    from mazegen import Maze, Config, Cell
+from mazegen import Maze, Config, Cell
 
 
 class OutputGenerator:
