@@ -1,2 +1,35 @@
-__pycache__
-.pytest_cache
+# --------------------
+# Python cache files
+# --------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --------------------
+# Type checker / linters
+# --------------------
+.mypy_cache/
+.flake8
+.pytest_cache/
+
+# --------------------
+# Virtual environment
+# --------------------
+.venv/
+venv/
+
+# --------------------
+# Python package / build artifacts
+# --------------------
+*.egg-info/
+build/
+dist/
+
+# --------------------
+# Project-specific outputs
+# --------------------
+# Ignore all .txt files
+*.txt
+
+# Except config.txt
+!config.txt
