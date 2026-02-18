@@ -16,7 +16,7 @@ class MazeGenerator:
         self.config = config
         self.visited = []
         self.maze = Maze(0, 0)
-        random.seed(1 if self.config.seed is not None else self.config.seed)
+        random.seed(1 if self.config.seed is None else self.config.seed)
 
     def create(self) -> Maze:
         """Create fully closed maze data structure to start (a grid of class 
@@ -44,7 +44,7 @@ class MazeGenerator:
         return self.maze
 
     def draw_42(self) -> None:
-        """Draw in the initial grid the "42" pattern. The "drawing" of the 
+        """Draw in the initial grid the "42" pattern. The "drawing" of the
         pattern is done by a "maze" copy, from a mini "maze" (maze_42) to the
         middle part of the initial grid."""
         if (
@@ -152,10 +152,15 @@ class MazeGenerator:
                     history[curr_coordinate] = prev_coordinate
                     stack.append(curr_coordinate)
 
-        backwards = self.config.exit
-        while backwards is not None:
-            self.maze.get_cell(*backwards).set(type=CellType.PATH)
-            backwards = history.get(backwards)
+        path: List[Coordinate] = []
+        coordinate = self.config.exit
+        while coordinate is not None:
+            self.maze.get_cell(*coordinate).set(type=CellType.PATH)
+            path.append(coordinate)
+            coordinate = history.get(coordinate)
+
+        path.reverse()
+        self.maze.set_path(path)
         self.maze.get_cell(*self.config.entry).set(type=CellType.ENTRY)
         self.maze.get_cell(*self.config.exit).set(type=CellType.EXIT)
 
