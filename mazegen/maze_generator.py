@@ -231,16 +231,16 @@ class MazeGenerator:
             (prev_coordinate, curr_coordinate)
         ):
             inner_walls = 0
-            for x in range(0, 7, 3):
-                for y in range(2):
+            for y in range(0, 7, 3):
+                for x in range(2):
                     if self.maze.has_wall_between(
                         square[x + y], square[x + y + 1]
                     ):
                         inner_walls += 1
-                if x < 6:
-                    for y in range(3):
+                if y < 6:
+                    for x in range(3):
                         if self.maze.has_wall_between(
-                            square[y], square[y + 3]
+                            square[x + y], square[x + y + 3]
                         ):
                             inner_walls += 1
 
@@ -270,12 +270,12 @@ class MazeGenerator:
         max_y = min(min(self.config.height - 3, col) for _, col in adj_cells)
 
         invalid_size_squares: List[List[Coordinate]] = []
-        for row in range(min_x, max_x + 1):
-            for col in range(min_y, max_y + 1):
+        for col in range(min_y, max_y + 1):
+            for row in range(min_x, max_x + 1):
                 square = [
                     (x, y)
-                    for x in range(row, row + 3)
                     for y in range(col, col + 3)
+                    for x in range(row, row + 3)
                 ]
                 invalid_size_squares.append(square)
 
