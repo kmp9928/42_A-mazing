@@ -63,7 +63,7 @@ class MazeGenerator:
             self.config.entry in self.visited or
             self.config.exit in self.visited
         ):
-            raise EntryExitInFTError({self.visited})
+            raise EntryExitInFTError(self.visited)
         # print(datetime.datetime.now())
         self.carve_maze()
         if not self.config.perfect:
