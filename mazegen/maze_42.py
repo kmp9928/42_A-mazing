@@ -1,5 +1,3 @@
-from .maze import Maze, CellType
-
 """
 Mini '42' maze pattern.
 
@@ -13,6 +11,8 @@ Example usage:
     from maze_42 import maze_42
     maze.copy_from(maze_42, x, y)
 """
+from .maze import Maze, CellType
+
 
 maze_42 = Maze(7, 5)
 
