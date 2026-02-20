@@ -11,6 +11,7 @@ from .errors import (
     EntryExitError,
     MandatoryKeyError
 )
+from typing import List
 
 
 @dataclass
@@ -132,12 +133,13 @@ class ConfigParser():
         try:
             with open(file_name, "r") as file:
                 for line in file:
-                    if line[0] == '#':
+                    line = line.strip()
+                    if not line or line.startswith("#"):
                         continue
-                    elements = line.split("=")
-                    if len(elements) != 2:
-                        raise KeyValueError(line.strip("\n"))
-                    data[elements[0]] = elements[1]
+                    key_value = ConfigParser.get_key_value(line)
+                    if len(key_value) != 2:
+                        raise KeyValueError(line)
+                    data[key_value[0]] = key_value[1]
                 return Config(
                     width=int(data["WIDTH"]),
                     height=int(data["HEIGHT"]),
@@ -155,6 +157,39 @@ class ConfigParser():
             raise WrongValueError(str(e).split(": ")[1])
         except KeyError as e:
             raise MandatoryKeyError(e)
+
+    @staticmethod
+    def get_key_value(line: str) -> List[str]:
+        """Extract a key-value pair from a line from the configuration file.
+
+        This function processes a single line from a configuration file,
+        ignoring any inline comments (denoted by `#`). It returns the key 
+        and value as a list of two strings. The function expects lines in the
+        format KEY=VALUE
+
+        Args:
+            line (str): A line from the configuration file.
+
+        Returns:
+            List[str]: A list containing the key and value as strings.
+
+        Raises:
+            KeyValueError: If the line does not contain a valid key-value pair.
+        
+        Examples:
+            >>> get_key_value("WIDTH=10")
+            ['WIDTH', '10']
+            >>> get_key_value("HEIGHT=20 # height of the maze")
+            ['HEIGHT', '20']
+        """
+        clean_line = line.split("#")
+        if len(clean_line) == 1:
+            return clean_line[0].split("=")
+        else:
+            for element in clean_line:
+                if "=" in element:
+                    return element.strip().split("=")
+        raise KeyValueError(line)
 
     @staticmethod
     def parse_coordinate(is_entry: bool, data: str) -> tuple[int, int]:
@@ -176,7 +211,7 @@ class ConfigParser():
             name = "EXIT"
         coordinate = data.split(",")
         if len(coordinate) != 2:
-            raise SyntaxError(name, data.strip("\n"), "in (x,y) format")
+            raise SyntaxError(name, data, "in (x,y) format")
         return (int(coordinate[0]), int(coordinate[1]))
 
     @staticmethod
@@ -194,8 +229,8 @@ class ConfigParser():
 
         Raises:
             SyntaxError: If the file extension is not '.txt'.
-        """   
-        file_name = data.strip("\n")
+        """
+        file_name = data
         if Path(file_name).suffix != ".txt":
             raise SyntaxError(
                 name, file_name, "of '.txt' extension"
@@ -217,12 +252,11 @@ class ConfigParser():
         Raises:
             SyntaxError: If the value is not 'True' or 'False'.
         """
-        condition = data.strip("\n").capitalize()
-        if condition == "True":
+        if data.capitalize() == "True":
             return True
-        if condition == "False":
+        if data.capitalize() == "False":
             return False
-        raise SyntaxError("PERFECT", condition, "True or False")
+        raise SyntaxError("PERFECT", data, "True or False")
 
     @staticmethod
     def parse_seed(data: dict[str, str]) -> Optional[int]:
