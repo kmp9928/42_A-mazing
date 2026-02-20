@@ -1,9 +1,9 @@
-*This project has been created as part of the 42 curriculum by <sukerl>, <kimendon>.*
+*This project has been created as part of the 42 curriculum by sukerl, kimendon.*
 
 # --------------------------A-Maze-ing---------------------------------
 
 ## -------------------------Description--------------------------------
-A-Maze-ing is a Python project that generates mazes based on a configurable input file: config.txt
+A-Maze-ing is a Python project that generates mazes based on a configuration file: config.txt
 
 The main goal of the project is to create a reusable maze generator module (`mazegen`) that can be installed via `pip` and used in other projects.  
 
@@ -90,6 +90,7 @@ make clean			# cleans pycache, dist,  build, *.egg-info
 
 Example:
 
+```
 WIDTH=12
 HEIGHT=12
 ENTRY=0,0
@@ -97,7 +98,7 @@ EXIT=11,11
 OUTPUT_FILE=example.txt
 PERFECT=True
 SEED=1
-
+```
 
 
 ## -------------------------Maze Generation Algorithm------------------
@@ -119,6 +120,13 @@ Why this algorithm was chosen:
     - Naturally creates long, winding passages rather than many small isolated walls.
     - More memory-efficient for smaller mazes since it only needs a stack of visited paths, whereas Prim’s and Kruskal’s require managing edge lists or priority queues.
 
+Additionally, the `mazegen` Package uses the Breadth-First Search (BFS) algorithm to find the solution of the maze:
+
+- Starting from the entry point, it explores all reachable neighboring cells level by level, visiting cells in expanding “waves” until the exit is found.
+- Each visited cell keeps track of its predecessor, allowing the algorithm to reconstruct the shortest path once the exit is reached.
+- Because the maze is unweighted (each move has equal cost), BFS guarantees the shortest possible path from entry to exit.
+- Ensures deterministic and optimal pathfinding, making it ideal for visualizing or highlighting the maze solution.
+
 
 
 ## -------------------------Reusable Code------------------------------
@@ -130,53 +138,63 @@ What is reusable:
 
 Example:
 
+```
 from mazegen import MazeGenerator, Config
 
 config = Config(
-    width=12,
-    height=12,
-    entry=(0,0),
-    exit=(11,11),
-    output_file="example.txt",
-    perfect=True
+			width=12,
+			height=12,
+			entry=(0,0),
+			exit=(11,11),
+			output_file="example.txt",
+			perfect=True
 )
 
 maze_gen = MazeGenerator(config, seed=1)
 maze = maze_gen.create()
-
-
+```
 
 ## -------------------------Team and Project Management----------------
 - Team Roles:
-    - Kimberly: Core maze generation, Configuration parser, Testing, 
+    - Kimberly: Maze generation, shortest path solver, configuration file parser and testing.
 
-    - Susanne: Package creation, Output formatting, ASCII display, Makefile, Documentation
+    - Susanne: Package creation, output formatting, ASCII display, Makefile and documentation.
 - Planning & Evolution:
-    - Initial planning focused on maze creation and validation
-    - Adjustments made to implement “42” pattern and perfect mazes
-    - Iterative testing with config files to ensure robustness
+    - Initial planning focused on maze creation, validation and split of tasks.
+    - Adjustments made to implement “42” pattern and allow the creation of imperfect mazes.
+    - Iterative testing with config files to ensure robustness.
+	- Creation of output file module allowing the conversion of the maze to hex format and the inclusion of the maze entry, exit and solution path.
+	- Set up of the visual representation module.
+	- Adjustments made to allow different styles of visual representation with ASCII.
+	- Configuration of the maze class as a package.
+	- Design of Makefile and README.
 - What worked well / Improvements:
-    - Modular design allowed isolated testing of maze generation
-    - Future improvement: support multiple algorithms or visualization modes
+    - Modular design, allowed isolated testing of maze generation.
+    - Future improvement: support multiple algorithms or visualization modes.
 - Tools Used:
-    - Python 3.10+, venv, pip, make, flake8, mypy, pytest
-    - AI assistance was used for brainstorming, subject explanations, code trouble shooting, structure and README drafting
+    - Python 3.10+, venv, pip, make, flake8, mypy and pytest.
+	- Github for collaboration and version control.
+    - AI assistance was used for brainstorming, subject explanations, code trouble shooting, structure and README drafting.
 
 
 
 ## -------------------------References---------------------------------
 ### References
+https://medium.com/swlh/solving-mazes-with-depth-first-search-e315771317ae
+https://medium.com/@luthfisauqi17_68455/artificial-intelligence-search-problem-solve-maze-using-breadth-first-search-bfs-algorithm-255139c6e1a3
 https://coderivers.org/blog/make-file-with-python/
 https://www.w3schools.com/python/python_virtualenv.asp
 
 
+
+## -------------------------AI Assistance------------------------------
 ### AI Assistance
 
 AI was used as a supportive tool throughout the project for the following purposes:
 
 - Explaining programming concepts and Python syntax relevant to the project.
 - Troubleshooting and debugging code issues in modules and scripts.
-- Providing guidance on project structure, packaging, and best practices.
+- Providing guidance on project structure, packaging and best practices.
 - Drafting and refining documentation, including README content and usage instructions.
 - Offering suggestions for implementing algorithms and designing reusable code components.
 
