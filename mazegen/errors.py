@@ -1,3 +1,7 @@
+from typing import List
+from .maze import Coordinate
+
+
 class ConfigFileError(Exception):
     """Base class for all configuration file related errors."""
     pass
@@ -100,6 +104,18 @@ class MandatoryKeyError(ConfigFileError):
         super().__init__(f"Missing mandatory key {key} in configuration file.")
 
 
-class EntryExitInFTError(Exception):
-    """Raised when entry or exit coordinates overlap with the '42' pattern."""
+class MazeGeneratorError(Exception):
+    """Base class for all maze generator related errors."""
     pass
+
+
+class EntryExitInFTError(MazeGeneratorError):
+    """Raised when entry or exit coordinates overlap with the '42' pattern.
+
+    Attributes:
+        patter (List[Coordinate]): List of coordinates of the '42' pattern.
+    """
+    def __init__(self, pattern: List[Coordinate]):
+        super().__init__(
+            "Entry/exit in '42' pattern. For this maze, entry/exit points " +
+            f"can't be any of these coordinates: {pattern}")
