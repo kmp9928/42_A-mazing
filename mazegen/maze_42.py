@@ -1,5 +1,19 @@
 from .maze import Maze, CellType
 
+"""
+Mini '42' maze pattern.
+
+This file contains a predefined small maze with the "42" pattern. It is used
+by the MazeGenerator to copy the pattern into the middle of larger mazes.
+
+The pattern is represented as a Maze object (or a 2D list of Cell instances)
+with all walls and cell types initialized to what is shown below.
+
+Example usage:
+    from maze_42 import maze_42
+    maze.copy_from(maze_42, x, y)
+"""
+
 maze_42 = Maze(7, 5)
 
 # 4
