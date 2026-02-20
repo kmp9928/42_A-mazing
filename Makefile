@@ -35,8 +35,8 @@ endif
 
 
 install: venv
-	@$(PIP) install --upgrade pip
-	@$(PIP) install mypy flake8 pytest
+	@$(PYTHON) -m pip install --upgrade pip
+	@$(PYTHON) -m pip install mypy flake8 pytest
 	@echo "Dependencies installed"
 
 
