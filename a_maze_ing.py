@@ -15,7 +15,7 @@ from create_output_txt import OutputGenerator
 import sys
 
 
-def create_maze(config: Config, maze_generator: MazeGenerator) -> Maze:
+def generate_maze(config: Config, maze_generator: MazeGenerator) -> Maze:
     """Generate a maze and write it to an output file.
 
     Use the ``MazeGenerator`` instance and then ``OutputGenerator``
@@ -36,7 +36,7 @@ def create_maze(config: Config, maze_generator: MazeGenerator) -> Maze:
     return maze
 
 
-def draw_maze(maze: Maze, show_path: bool, rotate_colors: bool) -> None:
+def render_maze(maze: Maze, show_path: bool, rotate_colors: bool) -> None:
     """Render the maze in ASCII format.
 
     Optionally toggles display of the shortest path and rotates
@@ -96,7 +96,7 @@ def interact_with_user(
             continue
 
         if choice == 1:
-            maze = create_maze(config, maze_generator)
+            maze = generate_maze(config, maze_generator)
         elif choice == 2:
             show_shortest_path = not show_shortest_path
         elif choice == 3:
@@ -107,7 +107,7 @@ def interact_with_user(
             print("\nPlease enter a number between 1 and 4.\n")
             continue
 
-        draw_maze(maze, show_shortest_path, rotate_colors)
+        render_maze(maze, show_shortest_path, rotate_colors)
 
 
 if __name__ == "__main__":
@@ -118,8 +118,8 @@ if __name__ == "__main__":
         try:
             config = ConfigParser().load(sys.argv[1])
             maze_generator = MazeGenerator(config)
-            maze = create_maze(config, maze_generator)
-            draw_maze(maze, False, False)
+            maze = generate_maze(config, maze_generator)
+            render_maze(maze, False, False)
             interact_with_user(maze, config, maze_generator)
         except (ConfigFileError, MazeGeneratorError) as e:
             print(f"Error: {e}")
