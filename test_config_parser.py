@@ -1,5 +1,5 @@
-import os
 import pytest
+import os
 from typing import Union, Optional
 from mazegen import ConfigParser, Config, ConfigFileError
 
@@ -164,23 +164,18 @@ def test_valid_config():
     assert ConfigParser.load("test_config.txt") == Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=1)
     prepare_test_file(None)
     assert ConfigParser.load("test_config.txt") == Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=None)
-    prepare_test_file({"WIDTH": "20#This is a comment"})
-    assert ConfigParser.load("test_config.txt") == Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=None)
-    prepare_test_file({"WIDTH": "20  # This is a comment"})
-    assert ConfigParser.load("test_config.txt") == Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=None)
-    prepare_test_file("WIDTH")
-    with open("test_config.txt", "a") as file:
-        file.write(" WIDTH = 20 ")
-    assert ConfigParser.load("test_config.txt") == Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=None)
 
 
-@pytest.mark.parametrize("append", [
-    ("#This is a comment"),
-    (" ")
+@pytest.mark.parametrize("remove,append", [
+    ("WIDTH", " WIDTH = 20 "),
+    ("WIDTH", "WIDTH=20  # This is a comment"),
+    (None, "#This is a comment"),
+    (None, " ")
 ])
-def test_valid_config_2(append):
-    prepare_test_file(None)
+def test_valid_config_2(remove, append):
+    config = Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=None)
+    prepare_test_file(remove)
     with open("test_config.txt", "a") as file:
         file.write(append)
-    assert ConfigParser.load("test_config.txt") == Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=None)
+    assert ConfigParser.load("test_config.txt") == config
     os.remove("test_config.txt")
