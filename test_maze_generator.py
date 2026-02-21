@@ -1,5 +1,6 @@
 import pytest
 from mazegen import Maze, MazeGenerator, MazeGeneratorError, Config, Cell
+from create_output_txt import OutputGenerator
 # from gpt_maze_visualizer import print_maze
 
 
@@ -56,3 +57,26 @@ def test_remove_wall_if_valid():
 def test_get_invalid_size_squares():
     maze_gen = create_maze_gen_and_grid(Config(width=5, height=5, entry=(0, 0), exit=(4, 4), output_file='maze.txt', perfect=True))
     assert maze_gen.get_invalid_size_squares(((0, 1), (1, 1))) == [[(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)], [(0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2), (0, 3), (1, 3), (2, 3)]]
+
+
+def test_solve_maze():
+    maze_gen = create_maze_gen_and_grid(Config(width=5, height=5, entry=(0, 0), exit=(4, 4), output_file='maze.txt', perfect=True))
+    maze_gen.maze.get_cell(0, 0).set(east=False)
+    maze_gen.maze.get_cell(1, 0).set(west=False, east=False)
+    maze_gen.maze.get_cell(2, 0).set(west=False, east=False)
+    maze_gen.maze.get_cell(3, 0).set(west=False, east=False)
+    maze_gen.maze.get_cell(4, 0).set(west=False, south=False)
+    maze_gen.maze.get_cell(4, 1).set(north=False, south=False)
+    maze_gen.maze.get_cell(4, 2).set(north=False, south=False)
+    maze_gen.maze.get_cell(4, 3).set(north=False, south=False)
+    maze_gen.maze.get_cell(4, 4).set(north=False)
+    maze_gen.solve_maze()
+    assert OutputGenerator().format_path(maze_gen.maze) == "EEEESSSS"
+    maze_gen = create_maze_gen_and_grid(Config(width=5, height=5, entry=(1, 1), exit=(2, 4), output_file='maze.txt', perfect=True))
+    maze_gen.maze.get_cell(1, 1).set(south=False)
+    maze_gen.maze.get_cell(1, 2).set(north=False, east=False)
+    maze_gen.maze.get_cell(2, 2).set(west=False, south=False)
+    maze_gen.maze.get_cell(2, 3).set(north=False, south=False)
+    maze_gen.maze.get_cell(2, 4).set(north=False)
+    maze_gen.solve_maze()
+    assert OutputGenerator().format_path(maze_gen.maze) == "SESS"
