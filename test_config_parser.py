@@ -1,8 +1,7 @@
-import os
 import pytest
+import os
 from typing import Union, Optional
-from config_parser import ConfigParser, Config
-from errors import ConfigFileError
+from mazegen import ConfigParser, Config, ConfigFileError
 
 
 def prepare_test_file(override: Optional[Union[dict[str, str], str]]):
@@ -47,7 +46,7 @@ def test_invalid_key_value(width, expected_error):
 
 
 @pytest.mark.parametrize("width,expected_error", [
-    ("a", "Value 'a\\n' is not a number."),
+    ("a", "Value 'a' is not a number."),
     ("-1", "Maze WIDTH can't be -1, must be at least 2."),
     ("1", "Maze WIDTH can't be 1, must be at least 2.")
 ])
@@ -59,7 +58,7 @@ def test_invalid_width(width, expected_error):
 
 
 @pytest.mark.parametrize("height,expected_error", [
-    ("abc", "Value 'abc\\n' is not a number."),
+    ("abc", "Value 'abc' is not a number."),
     ("-3", "Maze HEIGHT can't be -3, must be at least 2."),
     ("0", "Maze HEIGHT can't be 0, must be at least 2.")
 ])
@@ -138,10 +137,23 @@ def test_missing_mandatory_key(expected_error):
 
 
 @pytest.mark.parametrize("seed,expected_error", [
-    ("a", "Value 'a\\n' is not a number.")
+    ("a", "Value 'a' is not a number.")
 ])
 def test_invalid_seed(seed, expected_error):
     prepare_test_file({"SEED": seed})
+    with pytest.raises(ConfigFileError) as e:
+        ConfigParser.load("test_config.txt")
+    assert str(e.value) == expected_error
+
+
+@pytest.mark.parametrize("width,expected_error", [
+    ("#WIDTH=20", "Missing mandatory key 'WIDTH' in configuration file."),
+    ("#WIDTH=20#This is a comment", "Missing mandatory key 'WIDTH' in configuration file.")
+])
+def test_invalid_comments(width, expected_error):
+    prepare_test_file("WIDTH")
+    with open("test_config.txt", "a") as file:
+        file.write(width)
     with pytest.raises(ConfigFileError) as e:
         ConfigParser.load("test_config.txt")
     assert str(e.value) == expected_error
@@ -152,4 +164,18 @@ def test_valid_config():
     assert ConfigParser.load("test_config.txt") == Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=1)
     prepare_test_file(None)
     assert ConfigParser.load("test_config.txt") == Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=None)
+
+
+@pytest.mark.parametrize("remove,append", [
+    ("WIDTH", " WIDTH = 20 "),
+    ("WIDTH", "WIDTH=20  # This is a comment"),
+    (None, "#This is a comment"),
+    (None, " ")
+])
+def test_valid_config_2(remove, append):
+    config = Config(width=20, height=15, entry=(0, 0), exit=(19, 14), output_file='maze.txt', perfect=True, seed=None)
+    prepare_test_file(remove)
+    with open("test_config.txt", "a") as file:
+        file.write(append)
+    assert ConfigParser.load("test_config.txt") == config
     os.remove("test_config.txt")

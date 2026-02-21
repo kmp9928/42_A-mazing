@@ -69,18 +69,17 @@ class OutputGenerator:
 
     def format_path(self, maze: Maze) -> str:
         solution = ""
-        previous_x, previous_y = (0, 0)
+        previous_x, previous_y = maze.get_path()[0]
 
-        for coordinate in maze.get_path():
+        for coordinate in maze.get_path()[1:]:
             x, y = coordinate
-            if maze.get_cell(x, y).path:
-                if x > previous_x:
-                    solution += "E"
-                elif x < previous_x:
-                    solution += "W"
-                elif y > previous_y:
-                    solution += "S"
-                elif y < previous_y:
-                    solution += "N"
+            if x > previous_x:
+                solution += "E"
+            elif x < previous_x:
+                solution += "W"
+            elif y > previous_y:
+                solution += "S"
+            elif y < previous_y:
+                solution += "N"
             previous_x, previous_y = x, y
         return solution

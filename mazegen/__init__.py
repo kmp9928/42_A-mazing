@@ -5,7 +5,7 @@ __author__ = "kimendon, sukerl"    # Authors name...duh
 #   Imports:
 #   The modules/classes/functions you want to expose at the package level.
 from .config_parser import ConfigParser, Config
-from .errors import ConfigFileError, EntryExitInFTError
+from .errors import ConfigFileError, MazeGeneratorError
 from .maze_42 import maze_42
 from .maze_generator import MazeGenerator
 from .maze import Maze, Cell
@@ -16,7 +16,7 @@ __all__ = [
     "ConfigParser",
     "Config",
     "ConfigFileError",
-    "EntryExitInFTError",
+    "MazeGeneratorError",
     "maze_42",
     "MazeGenerator",
     "Maze",
