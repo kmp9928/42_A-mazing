@@ -139,7 +139,7 @@ class ConfigParser():
                     key_value = ConfigParser.get_key_value(line)
                     if len(key_value) != 2:
                         raise KeyValueError(line)
-                    data[key_value[0]] = key_value[1]
+                    data[key_value[0].strip()] = key_value[1].strip()
                 return Config(
                     width=int(data["WIDTH"]),
                     height=int(data["HEIGHT"]),
