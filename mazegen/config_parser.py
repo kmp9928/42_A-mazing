@@ -11,7 +11,7 @@ from .errors import (
     EntryExitError,
     MandatoryKeyError
 )
-from typing import List
+from typing import List, Dict
 
 
 @dataclass
@@ -42,7 +42,7 @@ class Config():
     perfect: bool
     seed: Optional[int] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate configuration values after initialization.
 
         Calls all validation methods to ensure:
@@ -128,7 +128,7 @@ class ConfigParser():
             WrongValueError: If a value cannot be converted properly.
             KeyValueError: If a line is not in key=value format.
         """
-        data: dict[str, str] = {}
+        data: Dict[str, str] = {}
         try:
             with open(file_name, "r") as file:
                 for line in file:
@@ -155,14 +155,14 @@ class ConfigParser():
         except ValueError as e:
             raise WrongValueError(str(e).split(": ")[1])
         except KeyError as e:
-            raise MandatoryKeyError(e)
+            raise MandatoryKeyError(str(e))
 
     @staticmethod
     def get_key_value(line: str) -> List[str]:
         """Extract a key-value pair from a line from the configuration file.
 
         This function processes a single line from a configuration file,
-        ignoring any inline comments (denoted by `#`). It returns the key 
+        ignoring any inline comments (denoted by `#`). It returns the key
         and value as a list of two strings. The function expects lines in the
         format KEY=VALUE
 
@@ -229,12 +229,11 @@ class ConfigParser():
         Raises:
             SyntaxError: If the file extension is not '.txt'.
         """
-        file_name = data
-        if Path(file_name).suffix != ".txt":
+        if Path(data).suffix != ".txt":
             raise SyntaxError(
-                name, file_name, "of '.txt' extension"
+                name, data, "of '.txt' extension"
             )
-        return (file_name)
+        return (data)
 
     @staticmethod
     def parse_bool(data: str) -> bool:
@@ -258,11 +257,11 @@ class ConfigParser():
         raise SyntaxError("PERFECT", data, "True or False")
 
     @staticmethod
-    def parse_seed(data: dict[str, str]) -> Optional[int]:
+    def parse_seed(data: Dict[str, str]) -> Optional[int]:
         """Parse optional random seed value.
 
         Args:
-            data (dict[str, str]): Parsed key-value pairs.
+            data (Dict[str, str]): Parsed key-value pairs.
 
         Returns:
             Optional[int]: Integer seed if provided, otherwise None.
@@ -272,3 +271,4 @@ class ConfigParser():
         """
         if data.get("SEED") is not None:
             return (int(data["SEED"]))
+        return None

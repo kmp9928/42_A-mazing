@@ -69,9 +69,9 @@ class OutputGenerator:
     def format_path(self, maze: Maze) -> str:
         """Convert a maze path into a string of directional moves.
 
-        Iterates through the sequence of coordinates returned by `maze.get_path()`
-        and translates each step between consecutive coordinates into a compass
-        direction:
+        Iterates through the sequence of coordinates returned by
+        `maze.get_path()`and translates each step between consecutive
+        coordinates into a compass direction:
 
         - "E" for east  (increase in x)
         - "W" for west  (decrease in x)

@@ -8,10 +8,18 @@ This module:
 - Displays it in ASCII format
 - Provides an interactive CLI for regenerating and modifying display options
 """
-from mazegen import MazeGenerator, Maze, Config, ConfigParser, ConfigFileError, MazeGeneratorError
+from mazegen import (
+    Config,
+    ConfigParser,
+    MazeGenerator,
+    Maze,
+    ConfigFileError,
+    MazeGeneratorError
+)
 from print_ascii import AsciiPrinter
 from create_output_txt import OutputGenerator
 import sys
+from typing import Dict
 
 
 def generate_maze(config: Config, maze_generator: MazeGenerator) -> Maze:
@@ -54,7 +62,7 @@ def interact_with_user(
     Args:
         maze (Maze): The current maze instance to interact with.
     """
-    choices: dict[int, str] = {
+    choices: Dict[int, str] = {
         1: "Re-generate a new maze",
         2: "Show/Hide path from entry to exit",
         3: "Rotate maze colors",
@@ -89,7 +97,10 @@ def interact_with_user(
 if __name__ == "__main__":
     args = len(sys.argv)
     if args != 2:
-        print("Invalid number of arguments provided. Please enter 'python3 a_maze_ing.py config.txt")
+        print(
+            "Invalid number of arguments provided. Please enter 'python3 " +
+            "a_maze_ing.py config.txt"
+        )
     else:
         try:
             config = ConfigParser().load(sys.argv[1])

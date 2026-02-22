@@ -48,7 +48,7 @@ class SyntaxError(ConfigFileError):
         value (int): Value of the parameter.
         condition (str): Required condition for the parameter.
     """
-    def __init__(self, parameter: str, value: int, condition: str):
+    def __init__(self, parameter: str, value: str, condition: str):
         super().__init__(
             f"{parameter} with value {value} not valid. " +
             f"Parameter must be {condition}."
@@ -73,9 +73,9 @@ class PointBoundError(ConfigFileError):
 
     Attributes:
         parameter (str): Name of the parameter ('ENTRY' or 'EXIT').
-        value (int): Coordinate value that is out of bounds.
+        value (Coordinate): Coordinate value that is out of bounds.
     """
-    def __init__(self, parameter: str, value: int):
+    def __init__(self, parameter: str, value: Coordinate):
         super().__init__(
             f"{parameter} not valid. {value} must be inside the maze bounds."
         )
@@ -85,10 +85,10 @@ class EntryExitError(ConfigFileError):
     """Raised when entry and exit points are identical.
 
     Attributes:
-        entry (str): Entry coordinate.
-        exit (int): Exit coordinate.
+        entry (Coordinate): Entry coordinate.
+        exit (Coordinate): Exit coordinate.
     """
-    def __init__(self, entry: str, exit: int):
+    def __init__(self, entry: Coordinate, exit: Coordinate):
         super().__init__(
             f"Invalid entry {entry} and exit {exit}. Points must be different."
         )
