@@ -15,11 +15,10 @@ endif
 
 help:
 	@echo "Commands:"
-	@echo "make venv			Installs virtual environment if not aleady present, every other comand runs with ...: venv"
+	@echo "make venv			Installs virtual environment if not aleady present #, every other comand runs with ...: venv"
 	@echo "make install			Installs development dependencies: mypy, flake8, pytest, pip(upgrade)"
 	@echo "make run				runs a_maze_ing.py config.txt"
 	@echo "make debug			runs your program in pdb"
-	@echo "make test			runs test_config_parser.py"
 	@echo "make lint			runs flake8 and mypy tests"
 	@echo "make lint-strict		runs flake8 and mypy --strict"
 	@echo "make clean			cleans pycache, dist,  build, *.egg-info"
@@ -40,19 +39,15 @@ install: venv
 	@echo "Dependencies installed"
 
 
-run: venv
+run:
 	@$(PYTHON) $(TO_RUN)
 
 
-debug: venv
+debug:
 	@$(PYTHON) -m pdb $(TO_RUN)
 
 
-test: venv
-	@$(PYTHON) test_config_parser.py
-
-
-lint: venv
+lint:
 	@$(PYTHON) -m flake8 .
 	@$(PYTHON) -m mypy . \
 		--warn-return-any \
@@ -62,7 +57,7 @@ lint: venv
 		--check-untyped-defs
 
 
-lint-strict: venv
+lint-strict:
 	@$(PYTHON) -m flake8 .
 	@$(PYTHON) -m mypy . --strict	
 

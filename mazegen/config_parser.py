@@ -41,7 +41,6 @@ class Config():
     output_file: str
     perfect: bool
     seed: Optional[int] = None
-    # display_mode: str = ASCII
 
     def __post_init__(self):
         """Validate configuration values after initialization.
@@ -139,7 +138,7 @@ class ConfigParser():
                     key_value = ConfigParser.get_key_value(line)
                     if len(key_value) != 2:
                         raise KeyValueError(line)
-                    data[key_value[0].strip()] = key_value[1].strip()
+                    data[key_value[0].strip().upper()] = key_value[1].strip()
                 return Config(
                     width=int(data["WIDTH"]),
                     height=int(data["HEIGHT"]),
@@ -175,7 +174,7 @@ class ConfigParser():
 
         Raises:
             KeyValueError: If the line does not contain a valid key-value pair.
-        
+
         Examples:
             >>> get_key_value("WIDTH=10")
             ['WIDTH', '10']

@@ -69,23 +69,6 @@ class Cell:
         """Return True if the cell is the exit of the maze."""
         return self.type == CellType.EXIT
 
-    # def __repr__(self):
-    #     # !!!! For printing maze. Remove before submission !!!!
-    #     t = "O"
-    #     if self.blocked:
-    #         t = "B"
-    #     elif self.path:
-    #         t = "P"
-    #     elif self.entry:
-    #         t = "e"
-    #     elif self.exit:
-    #         t = "E"
-    #     w = 1 if self.west else 0
-    #     s = 1 if self.south else 0
-    #     e = 1 if self.east else 0
-    #     n = 1 if self.north else 0
-    #     return f"{t}w{w}s{s}e{e}n{n}{t}"
-
     def set(self, **kwargs) -> "Cell":
         """Update one or more cell attributes.
 
@@ -163,7 +146,7 @@ class Maze:
         Returns:
             Cell: The corresponding cell instance.
         """
- 
+
         return self.grid[y][x]
 
     def get_blocked_cells(self) -> List[Coordinate]:

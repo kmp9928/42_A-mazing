@@ -47,7 +47,6 @@ class OutputGenerator:
             Cell objects.
             config_obj (Config): Configuration object containing `entry` and
             `exit` coordinates.
-            path?????????
         """
         file_name = config_obj.output_file
         file_path: Path = Path(file_name)   # add actual path!
@@ -68,6 +67,26 @@ class OutputGenerator:
             raise OSError(f"ERROR while opening {file_name}: {err}")
 
     def format_path(self, maze: Maze) -> str:
+        """Convert a maze path into a string of directional moves.
+
+        Iterates through the sequence of coordinates returned by `maze.get_path()`
+        and translates each step between consecutive coordinates into a compass
+        direction:
+
+        - "E" for east  (increase in x)
+        - "W" for west  (decrease in x)
+        - "S" for south (increase in y)
+        - "N" for north (decrease in y)
+
+        The resulting string represents the full path from start to finish.
+
+        Args:
+            maze (Maze): A Maze instance containing a valid path as an ordered
+                list of (x, y) coordinate tuples.
+
+        Returns:
+            str: A string of directional characters representing the path.
+        """
         solution = ""
         previous_x, previous_y = maze.get_path()[0]
 
