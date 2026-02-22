@@ -8,7 +8,6 @@ This module:
 - Displays it in ASCII format
 - Provides an interactive CLI for regenerating and modifying display options
 """
-
 from mazegen import MazeGenerator, Maze, Config, ConfigParser, ConfigFileError, MazeGeneratorError
 from print_ascii import AsciiPrinter
 from create_output_txt import OutputGenerator
@@ -34,27 +33,6 @@ def generate_maze(config: Config, maze_generator: MazeGenerator) -> Maze:
     output = OutputGenerator()
     output.create_output_txt(maze, config)
     return maze
-
-
-def render_maze(maze: Maze, show_path: bool, rotate_colors: bool) -> None:
-    """Render the maze in ASCII format.
-
-    Optionally toggles display of the shortest path and rotates
-    the color scheme before printing the maze.
-
-    Args:
-        maze (Maze): The maze to render.
-        show_path (bool): If True, display the shortest path from
-            entry to exit.
-        rotate_colors (bool): If True, rotate the color scheme used
-            for rendering.
-    """
-    printer = AsciiPrinter()
-    if show_path:
-        printer.toggle_path()
-    if rotate_colors:
-        printer.rotate_colours()
-    printer.print_maze(maze)
 
 
 def interact_with_user(
@@ -83,8 +61,6 @@ def interact_with_user(
         4: "Quit"
     }
 
-    show_shortest_path = False
-    rotate_colors = False
     while True:
         print("=== A-Maze-ing ===")
         for num, info in choices.items():
@@ -98,28 +74,29 @@ def interact_with_user(
         if choice == 1:
             maze = generate_maze(config, maze_generator)
         elif choice == 2:
-            show_shortest_path = not show_shortest_path
+            printer.toggle_path()
         elif choice == 3:
-            rotate_colors = not rotate_colors
+            printer.rotate_colours()
         elif choice == 4:
             break
         else:
             print("\nPlease enter a number between 1 and 4.\n")
             continue
 
-        render_maze(maze, show_shortest_path, rotate_colors)
+        printer.print_maze(maze)
 
 
 if __name__ == "__main__":
     args = len(sys.argv)
-    if args == 1:
-        print("Configuration file missing. Please run again including it.")
+    if args != 2:
+        print("Invalid number of arguments provided. Please enter 'python3 a_maze_ing.py config.txt")
     else:
         try:
             config = ConfigParser().load(sys.argv[1])
             maze_generator = MazeGenerator(config)
             maze = generate_maze(config, maze_generator)
-            render_maze(maze, False, False)
+            printer = AsciiPrinter()
+            printer.print_maze(maze)
             interact_with_user(maze, config, maze_generator)
-        except (ConfigFileError, MazeGeneratorError) as e:
+        except (ConfigFileError, MazeGeneratorError, OSError) as e:
             print(f"Error: {e}")

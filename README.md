@@ -34,7 +34,12 @@ Install all required development dependencies (mypy, flake8, pytest, pip upgrade
 make install
 ```
 
-### 3. Install the `mazegen` Package
+### 3. Install the `mazegen` Package in your current environment:
+```bash
+# If you want to install this package inside your venv:
+source .venv/bin/activate
+```
+
 ```bash
 # Install your package build tools
 pip install setuptools wheel build

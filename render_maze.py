@@ -303,33 +303,6 @@ class RenderMazeGenerator:
         return rcell
 
     # THIS PRINTS 42 BACKGROUND IN CELLS not continuous
-    # @staticmethod
-    # def set_hor_wall(col: Cell, top: Cell | None) -> RCell:
-    #     """Return a horizontal wall RCell based on the top neighbor.
-
-    #     Args:
-    #         col (Cell): The current maze cell.
-    #         top (Cell | None): The cell above, if any.
-
-    #     Returns:
-    #         RCell: The rendered horizontal wall cell.
-    #     """
-    #     rcell: RCell = RCell()
-    #     rcell.set(type=RCellType.HORIZONTAL)
-    #     if top is None:
-    #         return rcell
-    #     if col.north is False:
-    #         rcell.set(open=True)
-    #         if col.blocked is True and top.blocked is True:
-    #             rcell.set(blocked=True)
-    #         elif col.path is True and top.path is True:
-    #             rcell.set(path=True)
-    #         elif top.entry or top.exit and col.path is True:  #
-    #             rcell.set(path=True)
-    #         elif col.entry or col.exit and top.path is True:  #
-    #             rcell.set(path=True)
-    #     return rcell
-
     @staticmethod
     def set_hor_wall(col: Cell, top: Cell | None) -> RCell:
         """Return a horizontal wall RCell based on the top neighbor.
@@ -347,47 +320,47 @@ class RenderMazeGenerator:
             return rcell
         if col.north is False:
             rcell.set(open=True)
-            # if col.blocked is True and top.blocked is True:
-            #     rcell.set(blocked=True)
-            if col.path is True and top.path is True:
+            if col.blocked is True and top.blocked is True:
+                rcell.set(blocked=True)
+            elif col.path is True and top.path is True:
                 rcell.set(path=True)
             elif top.entry or top.exit and col.path is True:  #
                 rcell.set(path=True)
             elif col.entry or col.exit and top.path is True:  #
                 rcell.set(path=True)
-        elif col.blocked is True and top.blocked is True:
-            rcell.set(blocked=True)
-
         return rcell
 
-    # THIS PRINTS 42 BACKGROUND IN CELLS not continuous:
     # @staticmethod
-    # def set_ver_wall(col: Cell, prev: Cell | None) -> RCell:
-    #     """Return a vertical wall RCell based on the left neighbor.
+    # def set_hor_wall(col: Cell, top: Cell | None) -> RCell:
+    #     """Return a horizontal wall RCell based on the top neighbor.
 
     #     Args:
     #         col (Cell): The current maze cell.
-    #         prev (Cell | None): The cell to the left, if any.
+    #         top (Cell | None): The cell above, if any.
 
     #     Returns:
-    #         RCell: The rendered vertical wall cell.
+    #         RCell: The rendered horizontal wall cell.
     #     """
     #     rcell: RCell = RCell()
-    #     rcell.set(type=RCellType.VERTICAL)
-    #     if prev is None:
+    #     rcell.set(type=RCellType.HORIZONTAL)
+    #     if top is None:
     #         return rcell
-    #     if col.west is False:
+    #     if col.north is False:
     #         rcell.set(open=True)
-    #         if col.blocked is True and prev.blocked is True:
-    #             rcell.set(blocked=True)
-    #         elif col.path is True and prev.path is True:
+    #         # if col.blocked is True and top.blocked is True:
+    #         #     rcell.set(blocked=True)
+    #         if col.path is True and top.path is True:
     #             rcell.set(path=True)
-    #         elif col.exit or col.entry and prev.path is True:  #
+    #         elif top.entry or top.exit and col.path is True:  #
     #             rcell.set(path=True)
-    #         elif col.path is True and prev.entry or prev.exit:  # #
+    #         elif col.entry or col.exit and top.path is True:  #
     #             rcell.set(path=True)
+    #     elif col.blocked is True and top.blocked is True:
+    #         rcell.set(blocked=True)
+
     #     return rcell
 
+    # THIS PRINTS 42 BACKGROUND IN CELLS not continuous:
     @staticmethod
     def set_ver_wall(col: Cell, prev: Cell | None) -> RCell:
         """Return a vertical wall RCell based on the left neighbor.
@@ -413,9 +386,36 @@ class RenderMazeGenerator:
                 rcell.set(path=True)
             elif col.path is True and prev.entry or prev.exit:  # #
                 rcell.set(path=True)
-        if col.blocked is True and prev.blocked is True:
-            rcell.set(blocked=True)
         return rcell
+
+    # @staticmethod
+    # def set_ver_wall(col: Cell, prev: Cell | None) -> RCell:
+    #     """Return a vertical wall RCell based on the left neighbor.
+
+    #     Args:
+    #         col (Cell): The current maze cell.
+    #         prev (Cell | None): The cell to the left, if any.
+
+    #     Returns:
+    #         RCell: The rendered vertical wall cell.
+    #     """
+    #     rcell: RCell = RCell()
+    #     rcell.set(type=RCellType.VERTICAL)
+    #     if prev is None:
+    #         return rcell
+    #     if col.west is False:
+    #         rcell.set(open=True)
+    #         if col.blocked is True and prev.blocked is True:
+    #             rcell.set(blocked=True)
+    #         elif col.path is True and prev.path is True:
+    #             rcell.set(path=True)
+    #         elif (col.exit or col.entry) and prev.path is True:  #
+    #             rcell.set(path=True)
+    #         elif col.path is True and (prev.entry or prev.exit):  # #
+    #             rcell.set(path=True)
+    #     if col.blocked is True and prev.blocked is True:
+    #         rcell.set(blocked=True)
+    #     return rcell
 
     @staticmethod
     def set_center(col: Cell) -> RCell:

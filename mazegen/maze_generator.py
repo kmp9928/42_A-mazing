@@ -5,7 +5,6 @@ from .config_parser import Config
 from .errors import EntryExitInFTError
 from .maze import CellType, Maze, Coordinate
 from .maze_42 import maze_42
-# import datetime
 
 
 class MazeGenerator:
@@ -64,13 +63,10 @@ class MazeGenerator:
             self.config.exit in self.visited
         ):
             raise EntryExitInFTError(self.visited)
-        # print(datetime.datetime.now())
         self.carve_maze()
         if not self.config.perfect:
             self.make_imperfect()
-        # print(datetime.datetime.now())
         self.solve_maze()
-        # print(datetime.datetime.now())
         return self.maze
 
     def draw_42(self) -> None:

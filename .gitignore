@@ -24,12 +24,21 @@ venv/
 *.egg-info/
 build/
 dist/
+setup.py
+gpt_maze_visualizer.py
+output_validator.py
 
 # --------------------
 # Project-specific outputs
 # --------------------
 # Ignore all .txt files
 *.txt
+
+# --------------------
+# Project-specific tests
+# --------------------
+test_config_parser.py
+tets_maze_generator.py
 
 # Except config.txt
 !config.txt
