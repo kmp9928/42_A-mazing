@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from enum import Enum
 from dataclasses import dataclass
 
@@ -69,11 +69,11 @@ class Cell:
         """Return True if the cell is the exit of the maze."""
         return self.type == CellType.EXIT
 
-    def set(self, **kwargs) -> "Cell":
+    def set(self, **kwargs: Union[bool, CellType]) -> "Cell":
         """Update one or more cell attributes.
 
         Args:
-            **kwargs: Attribute-value pairs to update.
+            **kwargs (Union[bool, CellType]): Attribute-value pairs to update.
 
         Returns:
             Cell: The updated cell instance (allows method chaining).
@@ -189,6 +189,8 @@ class Maze:
         elif y < previous_y:
             return self.get_cell(previous_x, previous_y).north
 
+        assert False, "This should't happen"
+
     def set_wall_at(
         self,
         previous_coordinate: Coordinate,
@@ -242,7 +244,6 @@ class Maze:
             for y in range(source.height):
                 paste_x = offset_x + x
                 paste_y = offset_y + y
-                # Copy cell values from source maze to current maze
                 self.get_cell(paste_x, paste_y).set(
                     **source.get_cell(x, y).__dict__
                 )

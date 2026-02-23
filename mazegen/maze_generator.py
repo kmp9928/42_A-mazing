@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Optional
 import random
 from sys import stderr
 from .config_parser import Config
@@ -86,7 +86,7 @@ class MazeGenerator:
         y = int((self.maze.height - maze_42.height) / 2)
         self.maze.copy_from(maze_42, x, y)
 
-    def carve_maze(self):
+    def carve_maze(self) -> None:
         """Carve the maze using depth-first search (DFS) algorithm.
 
         Starting from the entry point, the algorithm visits
@@ -175,7 +175,9 @@ class MazeGenerator:
         """
         self.visited = self.maze.get_blocked_cells()
         stack = [self.config.entry]
-        history = {self.config.entry: None}
+        history: Dict[Coordinate, Optional[Coordinate]] = {
+            self.config.entry: None
+        }
 
         while stack:
             prev_coordinate = stack[0]
@@ -194,11 +196,11 @@ class MazeGenerator:
                     stack.append(curr_coordinate)
 
         path: List[Coordinate] = []
-        coordinate = self.config.exit
-        while coordinate is not None:
-            self.maze.get_cell(*coordinate).set(type=CellType.PATH)
-            path.append(coordinate)
-            coordinate = history.get(coordinate)
+        path_coordinate: Optional[Coordinate] = self.config.exit
+        while path_coordinate is not None:
+            self.maze.get_cell(*path_coordinate).set(type=CellType.PATH)
+            path.append(path_coordinate)
+            path_coordinate = history.get(path_coordinate)
 
         path.reverse()
         self.maze.set_path(path)
