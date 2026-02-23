@@ -48,18 +48,18 @@ debug:
 
 
 lint:
-	@$(PYTHON) -m flake8 .
+	@$(PYTHON) -m flake8 . --exclude=.venv
 	@$(PYTHON) -m mypy . \
 		--warn-return-any \
 		--warn-unused-ignores \
 		--ignore-missing-imports \
 		--disallow-untyped-defs \
-		--check-untyped-defs
+		--check-untyped-defs --exclude=.venv
 
 
 lint-strict:
-	@$(PYTHON) -m flake8 .
-	@$(PYTHON) -m mypy . --strict	
+	@$(PYTHON) -m flake8 . --exclude=.venv
+	@$(PYTHON) -m mypy . --strict --exclude=.venv
 
 
 clean:
