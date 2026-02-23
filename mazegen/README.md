@@ -44,9 +44,10 @@ The `Config` object controls the maze generation:
 | `height`  | `int`         | Maze height                       |
 | `entry`   | `(x, y)`      | Entry coordinate                  |
 | `exit`    | `(x, y)`      | Exit coordinate                   |
-| `seed`    | `int \| None` | Random seed (for reproducibility) |
 | `perfect` | `bool`        | If `True`, maze has only 1 solution and no loops      |
+| `seed`    | `int \| None` | Random seed (for reproducibility) |
 
+Note: The initial project for which this module was created asked for the parameter `output_file` in `Config`. This field can be removed from it for future usages.
 
 ## Accessing the Maze Structure
 
