@@ -71,6 +71,6 @@ ifeq ($(OS),Windows_NT)
 	@del /q *.egg-info 2>nul || true
 # Unix 
 else
-	@rm -rf __pycache__ dist build *.egg-info
+	@rm -rf __pycache__ .mypy_cache dist build *.egg-info
 endif
 	@echo "Cleaned build artifacts and cache files"

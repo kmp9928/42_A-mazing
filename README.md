@@ -79,7 +79,6 @@ make venv			# Installs virtual environment if not aleady present
 make install		# Installs development dependencies: mypy, flake8, pytest, pip(upgrade)
 make run			# runs a_maze_ing.py config.txt
 make debug			# runs your program in pdb
-make test			# runs test_config_parser.py
 make lint			# runs flake8 and mypy tests
 make lint-strict	# runs flake8 and mypy --strict
 make clean			# cleans pycache, dist,  build, *.egg-info
