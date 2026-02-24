@@ -50,6 +50,7 @@ Install all required development dependencies (mypy, flake8, pytest, pip upgrade
 ```bash
 make run
 ```
+
 ### 4. Other Available Options
 The project includes a Makefile to simplify common tasks. Run the following command to see all available options: 
 ```bash
@@ -62,7 +63,20 @@ make lint-strict	# runs flake8 and mypy --strict
 make clean			# cleans pycache, dist,  build, *.egg-info
 ```
 
+### Note: To create the .tar and .whl files from `mazegen` (from a virtual environment and with a .toml file outside `mazegen`):
+```bash
+# Install your package build tools
+pip install setuptools wheel build
 
+# Optional: install type stubs for static checks
+pip install types-setuptools
+
+#Build your package (creates dist/ directory and mazegen.egg-info)
+python -m build
+
+# Install the wheel
+pip install dist/mazegen-1.0.0-py3-none-any.whl
+```
 
 ## -------------------------Configuration File-------------------------
 - The configuration file must contain one ‘KEY=VALUE‘ pair per line.
@@ -86,7 +100,7 @@ SEED=1
 ## -------------------------Maze Generation Algorithm------------------
 The `mazegen` Package uses a Depth-First Search (DFS) backtracking algorithm to carve the maze:
 
-- Starting from the entry point, it recursively visits unvisited neighboring cells, carving paths only if the cell has not been visited yet. This ensures that no loops are ever created.
+- Starting from the entry point, it visits unvisited neighboring cells, carving paths only if the cell has not been visited yet. This ensures that no loops are ever created.
 - Dead ends are backtracked until the entire maze is fully explored.
 - Supports a “perfect maze” mode by design, where all cells are reachable with a single unique path between any two points.
 
