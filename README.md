@@ -22,36 +22,10 @@ Main program provides:
 ## -------------------------Instructions-------------------------------
 
 
-### 1. Setup Virtual Environment
-Create a virtual environment for dependency isolation (recommended):  
-```bash
-make venv
-```
-
-### 2. Install Dependencies
-Install all required development dependencies (mypy, flake8, pytest, pip upgrade):  
+### 1. Setup Virtual Environment and install Dependencies
+Install all required development dependencies (mypy, flake8, pytest, pip upgrade, mazegen):  
 ```bash
 make install
-```
-
-### 3. Install the `mazegen` Package in your current environment:
-```bash
-# If you want to install this package inside your venv:
-source .venv/bin/activate
-```
-
-```bash
-# Install your package build tools
-pip install setuptools wheel build
-
-# Optional: install type stubs for static checks
-pip install types-setuptools
-
-#Build your package (creates dist/ directory and mazegen.egg-info)
-python -m build
-
-# Install the wheel
-pip install dist/mazegen-1.0.0-py3-none-any.whl
 
 # Optional: Test if Installation was successfull
 # Try importing the wheel: this is a test to check if it installed correctly
@@ -66,17 +40,22 @@ from mazegen import MazeGenerator
 exit()
 ```
 
-### 4. Run the Program
+### 2. To access the virtual environment:
+```bash
+source .venv/bin/activate
+```
+
+### 3. Run the Program
 Install all required development dependencies (mypy, flake8, pytest, pip upgrade):  
 ```bash
 make run
 ```
-### 5. Other Available Options
+
+### 4. Other Available Options
 The project includes a Makefile to simplify common tasks. Run the following command to see all available options: 
 ```bash
 make help
-make venv			# Installs virtual environment if not aleady present
-make install		# Installs development dependencies: mypy, flake8, pytest, pip(upgrade)
+make install		# Installs development dependencies: mypy, flake8, pytest, pip(upgrade), mazegen
 make run			# runs a_maze_ing.py config.txt
 make debug			# runs your program in pdb
 make lint			# runs flake8 and mypy tests
@@ -84,7 +63,20 @@ make lint-strict	# runs flake8 and mypy --strict
 make clean			# cleans pycache, dist,  build, *.egg-info
 ```
 
+### Note: To create the .tar and .whl files from `mazegen` (from a virtual environment and with a .toml file outside `mazegen`):
+```bash
+# Install your package build tools
+pip install setuptools wheel build
 
+# Optional: install type stubs for static checks
+pip install types-setuptools
+
+#Build your package (creates dist/ directory and mazegen.egg-info)
+python -m build
+
+# Install the wheel
+pip install dist/mazegen-1.0.0-py3-none-any.whl
+```
 
 ## -------------------------Configuration File-------------------------
 - The configuration file must contain one ‘KEY=VALUE‘ pair per line.
@@ -108,7 +100,7 @@ SEED=1
 ## -------------------------Maze Generation Algorithm------------------
 The `mazegen` Package uses a Depth-First Search (DFS) backtracking algorithm to carve the maze:
 
-- Starting from the entry point, it recursively visits unvisited neighboring cells, carving paths only if the cell has not been visited yet. This ensures that no loops are ever created.
+- Starting from the entry point, it visits unvisited neighboring cells, carving paths only if the cell has not been visited yet. This ensures that no loops are ever created.
 - Dead ends are backtracked until the entire maze is fully explored.
 - Supports a “perfect maze” mode by design, where all cells are reachable with a single unique path between any two points.
 
