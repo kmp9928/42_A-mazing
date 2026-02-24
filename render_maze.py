@@ -382,9 +382,9 @@ class RenderMazeGenerator:
                 rcell.set(blocked=True)
             elif col.path is True and prev.path is True:
                 rcell.set(path=True)
-            elif col.exit or col.entry and prev.path is True:  #
+            elif (col.exit or col.entry) and prev.path is True:  #
                 rcell.set(path=True)
-            elif col.path is True and prev.entry or prev.exit:  # #
+            elif col.path is True and (prev.entry or prev.exit):  # #
                 rcell.set(path=True)
         return rcell
 

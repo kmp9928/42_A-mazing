@@ -15,9 +15,9 @@ endif
 
 help:
 	@echo "Commands:"
-	@echo "make venv			Installs virtual environment if not aleady present #, every other comand runs with ...: venv"
+	@echo "make venv			Installs virtual environment if not aleady present"
 	@echo "make install			Installs development dependencies: mypy, flake8, pytest, pip(upgrade)"
-	@echo "make run				runs a_maze_ing.py config.txt"
+	@echo "make run 			runs a_maze_ing.py config.txt"
 	@echo "make debug			runs your program in pdb"
 	@echo "make lint			runs flake8 and mypy tests"
 	@echo "make lint-strict		runs flake8 and mypy --strict"
@@ -71,6 +71,6 @@ ifeq ($(OS),Windows_NT)
 	@del /q *.egg-info 2>nul || true
 # Unix 
 else
-	@rm -rf __pycache__ .mypy_cache dist build *.egg-info
+	@rm -rf __pycache__ .mypy_cache mazegen/__pycache__ dist build *.egg-info
 endif
 	@echo "Cleaned build artifacts and cache files"
